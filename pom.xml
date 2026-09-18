@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github.regalpine.ddd</groupId>
+    <artifactId>regalpine-ddd</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>RegalPine DDD Framework</name>
+    <description>DDD Infrastructure Framework for Enterprise Java Applications</description>
+    <url>https://github.com/RegalPine/regalpine-ddd</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>regalpine</id>
+            <name>Qingsong Wang</name>
+            <url>https://github.com/RegalPine</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/RegalPine/regalpine-ddd.git</connection>
+        <developerConnection>scm:git:ssh://github.com/RegalPine/regalpine-ddd.git</developerConnection>
+        <url>https://github.com/RegalPine/regalpine-ddd</url>
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+
+        <!-- Framework module versions -->
+        <ddd.version>${project.version}</ddd.version>
+
+        <!-- Third-party versions -->
+        <mybatis.version>3.5.16</mybatis.version>
+
+        <!-- Test dependencies -->
+        <junit.version>5.10.2</junit.version>
+        <assertj.version>3.25.3</assertj.version>
+        <mockito.version>5.11.0</mockito.version>
+
+        <!-- Plugin versions -->
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <jacoco.version>0.8.11</jacoco.version>
+    </properties>
+
+    <modules>
+        <module>ddd-core</module>
+        <module>ddd-domain</module>
+        <module>ddd-application</module>
+        <module>ddd-cqrs</module>
+        <module>ddd-event</module>
+        <module>ddd-transaction</module>
+        <module>ddd-messaging</module>
+        <module>ddd-runtime</module>
+        <module>ddd-infrastructure</module>
+        <module>ddd-test</module>
+        <module>ddd-conformance</module>
+        <module>ddd-infrastructure-jdbc</module>
+        <module>ddd-infrastructure-mybatis</module>
+        <module>ddd-messaging-kafka</module>
+        <module>ddd-messaging-rabbitmq</module>
+        <module>ddd-spring-boot</module>
+        <module>examples/order-service</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Core modules -->
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-core</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-domain</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-application</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-cqrs</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-event</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-transaction</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-messaging</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-runtime</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-infrastructure</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-infrastructure-mybatis</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-test</artifactId>
+                <version>${ddd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.regalpine.ddd</groupId>
+                <artifactId>ddd-conformance</artifactId>
+                <version>${ddd.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Test dependencies -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Common test dependencies for all modules -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <release>${maven.compiler.release}</release>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source JAR -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Javadoc JAR -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.3</version>
+                        <configuration>
+                            <source>17</source>
+                            <doclint>none</doclint>
+                            <quiet>true</quiet>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- GPG Signing -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Central Portal Publishing -->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.4.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,46 @@
+package io.github.regalpine.ddd.transaction;
+
+/**
+ * Port for managing transactions.
+ * <p>
+ * Infrastructure adapters implement this interface to provide transaction
+ * management capabilities (begin, commit, rollback).
+ *
+ * @author RegalPine
+ */
+public interface TransactionManager {
+
+    /**
+     * Executes a callback within a transaction using the default definition.
+     *
+     * @param callback the transactional callback
+     * @param <T>      the result type
+     * @return the result
+     */
+    <T> T execute(TransactionCallback<T> callback);
+
+    /**
+     * Executes a callback within a transaction using the given definition.
+     *
+     * @param definition the transaction definition
+     * @param callback   the transactional callback
+     * @param <T>        the result type
+     * @return the result
+     */
+    <T> T execute(TransactionDefinition definition, TransactionCallback<T> callback);
+
+    /**
+     * Executes a runnable within a transaction using the default definition.
+     *
+     * @param runnable the transactional runnable
+     */
+    void execute(TransactionRunnable runnable);
+
+    /**
+     * Executes a runnable within a transaction using the given definition.
+     *
+     * @param definition the transaction definition
+     * @param runnable   the transactional runnable
+     */
+    void execute(TransactionDefinition definition, TransactionRunnable runnable);
+}
