@@ -152,7 +152,7 @@ ddd-conformance
 ```xml
 <groupId>io.github.regalpine.ddd</groupId>
 <artifactId>regalpine-ddd</artifactId>
-<version>1.0.0-SNAPSHOT</version>
+<version>1.0.0</version>
 <packaging>pom</packaging>
 ```
 

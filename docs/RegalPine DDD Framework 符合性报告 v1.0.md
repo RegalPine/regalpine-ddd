@@ -1,7 +1,7 @@
 # RegalPine DDD Framework 规范符合性报告
 
 **报告日期:** 2026-09-13  
-**框架版本:** 1.0.0-SNAPSHOT  
+**框架版本:** 1.0.0  
 **规范版本:** 基础规范 v0.1 + Phase I–XIII  
 **审查范围:** 17 个 Maven 模块，270+ 个 Java 源文件，14 份规范文档  
 **修复状态:** 已完成 P0–P3 全部修复 + Phase II ddd-core 专项修复 + Phase III ddd-domain 专项修复 + Phase IV ddd-application 专项修复 + Phase V ddd-cqrs & ddd-event 专项修复 + Phase VI ddd-transaction 专项修复 + Phase VII ddd-infrastructure 专项修复 + Phase VIII ddd-runtime 专项修复 + Phase IX ddd-messaging 专项修复 + Phase X Framework Implementation 专项修复 + Phase XI Reference Implementation 专项修复 + Phase XII MyBatis Adapter & Adaptive Pagination 专项修复 + Phase XIII MyBatis Query Wrapper & AST 专项修复
@@ -1209,7 +1209,7 @@
 |------|------|------|:---:|
 | GroupId | `io.github.regalpine.ddd` | `io.github.regalpine.ddd` | ✅ |
 | Root ArtifactId | `regalpine-ddd` | `regalpine-ddd` | ✅ |
-| Version | `1.0.0-SNAPSHOT` | `1.0.0-SNAPSHOT` | ✅ |
+| Version | `1.0.0` | `1.0.0` | ✅ |
 | Packaging | `pom` | `pom` | ✅ |
 | Java 17 | 17+ | `<maven.compiler.release>17</maven.compiler.release>` | ✅ |
 | Dependency Management | Root POM 统一管理版本 | 已实现 | ✅ |

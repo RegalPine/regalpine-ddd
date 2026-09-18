@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 [![Java](https://img.shields.io/badge/java-17%2B-orange.svg)](https://adoptium.net)
-[![Maven Central](https://img.shields.io/badge/maven--central-1.0.0--SNAPSHOT-blueviolet.svg)](https://central.sonatype.com)
+[![Maven Central](https://img.shields.io/badge/maven--central-1.0.0-blueviolet.svg)](https://central.sonatype.com/artifact/io.github.regalpine.ddd/regalpine-ddd/1.0.0)
 
 **[English](./README.md)**
 
@@ -100,7 +100,7 @@ mvn clean package -DskipTests
 <dependency>
     <groupId>io.github.regalpine.ddd</groupId>
     <artifactId>ddd-core</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -110,7 +110,7 @@ Spring Boot 集成：
 <dependency>
     <groupId>io.github.regalpine.ddd</groupId>
     <artifactId>ddd-spring-boot</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
