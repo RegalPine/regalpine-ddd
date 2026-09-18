@@ -1,33 +1,18 @@
 package io.github.regalpine.ddd.messaging;
 
 /**
- * Port for adapting to specific messaging infrastructure (Kafka, RabbitMQ, etc.).
- *
- * <p>Phase IX §24: BrokerAdapter provides the publish/subscribe contract
- * that concrete infrastructure adapters must implement.
- * Adapter implementations must reside in infrastructure modules (§96).</p>
+ * 消息 Broker 适配器接口；支持发布和订阅。
  *
  * @author RegalPine
  */
-public interface BrokerAdapter {
+public interface BrokerAdapter extends AutoCloseable {
+    /** 发布消息信封。 */
+    PublishResult publish(MessageEnvelope envelope);
 
-    /**
-     * Publishes a message envelope to the broker.
-     *
-     * @param message the message envelope to publish
-     * @return the publish result
-     */
-    PublishResult publish(MessageEnvelope message);
+    /** 订阅消息并返回可关闭的句柄。 */
+    SubscriptionHandle subscribe(Subscription subscription, MessageConsumer consumer);
 
-    /**
-     * Subscribes to messages using the given subscription configuration.
-     *
-     * @param subscription the subscription to establish
-     */
-    void subscribe(Subscription subscription);
-
-    /**
-     * Closes the broker adapter and releases resources.
-     */
+    /** 关闭适配器并释放资源。 */
+    @Override
     void close();
 }

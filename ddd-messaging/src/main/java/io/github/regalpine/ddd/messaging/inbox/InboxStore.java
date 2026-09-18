@@ -25,6 +25,11 @@ public interface InboxStore {
      */
     boolean exists(String consumerId, String messageId);
 
+    /** 同一业务事务内原子占位；重复键返回 false，不使事务失效。 */
+    default boolean tryInsert(InboxRecord record) {
+        throw new UnsupportedOperationException("InboxStore 未实现原子占位");
+    }
+
     /**
      * Records that a message has been received/processed by the given consumer.
      *

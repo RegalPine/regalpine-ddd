@@ -38,8 +38,19 @@ public record OutboxRecord(
         Instant createdAt,
         String status,
         int attempts,
-        Instant publishedAt
+        Instant publishedAt,
+        String destination,
+        Instant nextAttemptAt,
+        String leaseToken,
+        Instant leaseUntil,
+        String lastError
 ) {
+    public OutboxRecord(String outboxId, String eventId, String eventType, int eventVersion,
+                        String aggregateType, String aggregateId, String tenantId, String payload,
+                        Instant occurredAt, Instant createdAt, String status, int attempts, Instant publishedAt) {
+        this(outboxId, eventId, eventType, eventVersion, aggregateType, aggregateId, tenantId, payload,
+                occurredAt, createdAt, status, attempts, publishedAt, eventType, createdAt, null, null, null);
+    }
 
     public OutboxRecord {
         Objects.requireNonNull(outboxId, "outboxId must not be null");
@@ -99,7 +110,8 @@ public record OutboxRecord(
         return new OutboxRecord(
                 outboxId, eventId, eventType, eventVersion,
                 aggregateType, aggregateId, tenantId, payload,
-                occurredAt, createdAt, "PUBLISHED", attempts, Instant.now());
+                occurredAt, createdAt, "PUBLISHED", attempts, Instant.now(), destination,
+                nextAttemptAt, null, null, lastError);
     }
 
     /**
@@ -109,6 +121,7 @@ public record OutboxRecord(
         return new OutboxRecord(
                 outboxId, eventId, eventType, eventVersion,
                 aggregateType, aggregateId, tenantId, payload,
-                occurredAt, createdAt, status, attempts + 1, publishedAt);
+                occurredAt, createdAt, status, attempts + 1, publishedAt, destination,
+                nextAttemptAt, leaseToken, leaseUntil, lastError);
     }
 }

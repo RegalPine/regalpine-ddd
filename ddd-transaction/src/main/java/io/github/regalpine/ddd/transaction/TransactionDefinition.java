@@ -23,6 +23,9 @@ public record TransactionDefinition(
         Objects.requireNonNull(propagation, "propagation must not be null");
         Objects.requireNonNull(isolation, "isolation must not be null");
         Objects.requireNonNull(timeout, "timeout must not be null");
+        if (timeout.isNegative()) {
+            throw new IllegalArgumentException("timeout 不能为负数");
+        }
     }
 
     /**

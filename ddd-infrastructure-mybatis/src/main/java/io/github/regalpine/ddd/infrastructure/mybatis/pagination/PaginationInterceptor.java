@@ -43,7 +43,7 @@ import java.util.Properties;
 public final class PaginationInterceptor implements Interceptor {
 
     private volatile PaginationDialect dialect;
-    private volatile PaginationContext context;
+    private final ThreadLocal<PaginationContext> context = new ThreadLocal<>();
 
     /**
      * Sets the pagination dialect to use for SQL rewriting.
@@ -56,45 +56,49 @@ public final class PaginationInterceptor implements Interceptor {
      * Sets the pagination context for the next query execution.
      */
     public void setContext(PaginationContext context) {
-        this.context = context;
+        this.context.set(java.util.Objects.requireNonNull(context, "context"));
     }
 
     /**
      * Clears the current pagination context after query execution.
      */
     public void clearContext() {
-        this.context = null;
+        this.context.remove();
     }
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        PaginationContext ctx = this.context;
-        if (ctx == null || dialect == null) {
+        PaginationContext ctx = context.get();
+        if (ctx == null) {
             return invocation.proceed();
         }
-
-        Object[] args = invocation.getArgs();
-        MappedStatement ms = (MappedStatement) args[0];
-        Object parameter = args[1];
-        RowBounds rowBounds = (RowBounds) args[2];
-        ResultHandler<?> resultHandler = (ResultHandler<?>) args[3];
-
-        BoundSql boundSql;
-        if (args.length == 6) {
-            boundSql = (BoundSql) args[5];
-        } else {
-            boundSql = ms.getBoundSql(parameter);
+        // 在进入执行器前消费上下文，嵌套查询不得继承本次分页。
+        context.remove();
+        try {
+            PaginationDialect currentDialect = java.util.Objects.requireNonNull(dialect,
+                    "分页查询必须配置 dialect");
+            Object[] args = invocation.getArgs();
+            MappedStatement ms = (MappedStatement) args[0];
+            Object parameter = args[1];
+            BoundSql original = args.length == 6 ? (BoundSql) args[5] : ms.getBoundSql(parameter);
+            PageRequest request = ctx.request();
+            BoundSql paged = new BoundSql(ms.getConfiguration(),
+                    currentDialect.applyOffsetLimit(original.getSql(), request.offset(), request.size()),
+                    original.getParameterMappings(), original.getParameterObject());
+            original.getAdditionalParameters().forEach(paged::setAdditionalParameter);
+            Executor executor = (Executor) invocation.getTarget();
+            CacheKey key = executor.createCacheKey(ms, parameter, RowBounds.DEFAULT, paged);
+            if (args.length == 6) {
+                args[2] = RowBounds.DEFAULT;
+                args[4] = key;
+                args[5] = paged;
+                return invocation.proceed();
+            }
+            // 六参数入口显式传递 BoundSql，无需修改共享 MappedStatement。
+            return executor.query(ms, parameter, RowBounds.DEFAULT, (ResultHandler<?>) args[3], key, paged);
+        } finally {
+            context.remove();
         }
-
-        String originalSql = boundSql.getSql();
-        PageRequest req = ctx.request();
-        String paginatedSql = dialect.applyOffsetLimit(
-                originalSql, req.offset(), req.size());
-
-        // Clear context after use
-        this.context = null;
-
-        return invocation.proceed();
     }
 
     @Override

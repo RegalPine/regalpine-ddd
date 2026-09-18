@@ -1,78 +1,29 @@
 package io.github.regalpine.ddd.infrastructure.mybatis.transaction;
 
-import io.github.regalpine.ddd.infrastructure.exception.PersistenceAccessException;
 import io.github.regalpine.ddd.infrastructure.mybatis.session.MyBatisSessionAdapter;
 import io.github.regalpine.ddd.transaction.TransactionAdapter;
 import io.github.regalpine.ddd.transaction.TransactionDefinition;
-
+import org.apache.ibatis.session.SqlSession;
 import java.util.Objects;
 
-/**
- * MyBatis-based transaction adapter.
- *
- * <p>Phase XII §13: manages transaction boundaries through the MyBatis
- * session lifecycle. The adapter opens a session on {@link #begin},
- * commits on {@link #commit}, and rolls back on {@link #rollback}.</p>
- *
- * <p>Phase XII §14: the repository must NOT commit its own transaction.
- * All commit/rollback decisions are made by this adapter.</p>
- *
- * @author RegalPine
- */
+/** 独立 MyBatis 事务适配器；不可与 Spring 管理的会话混用。 */
 public final class MyBatisTransactionAdapter implements TransactionAdapter {
-
-    private final MyBatisSessionAdapter sessionAdapter;
-
-    public MyBatisTransactionAdapter(MyBatisSessionAdapter sessionAdapter) {
-        this.sessionAdapter = Objects.requireNonNull(sessionAdapter, "sessionAdapter must not be null");
+    private final MyBatisSessionAdapter sessions;
+    public MyBatisTransactionAdapter(MyBatisSessionAdapter sessions) {
+        this.sessions = Objects.requireNonNull(sessions, "sessions");
     }
-
-    @Override
-    public void begin(TransactionDefinition definition) {
-        Objects.requireNonNull(definition, "definition must not be null");
-        if (sessionAdapter.hasCurrentSession()) {
-            throw new IllegalStateException("Transaction already active on current thread");
-        }
-        sessionAdapter.openSession();
+    @Override public void begin(TransactionDefinition definition) {
+        sessions.openSession(Objects.requireNonNull(definition, "definition"));
     }
-
-    @Override
-    public void commit() {
-        var session = sessionAdapter.currentSession();
-        if (session == null) {
-            throw new IllegalStateException("No active transaction to commit");
-        }
-        try {
-            session.commit();
-        } catch (Exception e) {
-            try {
-                session.rollback();
-            } catch (Exception rollbackEx) {
-                e.addSuppressed(rollbackEx);
-            }
-            throw new PersistenceAccessException("Failed to commit MyBatis transaction", e);
-        } finally {
-            sessionAdapter.closeSession();
-        }
+    @Override public void commit() { require().commit(true); }
+    @Override public void rollback() {
+        if (isActive()) require().rollback(true);
     }
-
-    @Override
-    public void rollback() {
-        var session = sessionAdapter.currentSession();
-        if (session == null) {
-            return;
-        }
-        try {
-            session.rollback();
-        } catch (Exception e) {
-            throw new PersistenceAccessException("Failed to rollback MyBatis transaction", e);
-        } finally {
-            sessionAdapter.closeSession();
-        }
-    }
-
-    @Override
-    public boolean isActive() {
-        return sessionAdapter.hasCurrentSession();
+    @Override public void close() { sessions.closeSession(); }
+    @Override public boolean isActive() { return sessions.hasCurrentSession(); }
+    @Override public Object suspend() { return sessions.suspend(); }
+    @Override public void resume(Object resource) { sessions.resume((SqlSession) resource); }
+    private SqlSession require() {
+        return Objects.requireNonNull(sessions.currentSession(), "没有活动 MyBatis 事务");
     }
 }

@@ -43,4 +43,14 @@ public interface TransactionManager {
      * @param runnable   the transactional runnable
      */
     void execute(TransactionDefinition definition, TransactionRunnable runnable);
+
+    default boolean isActive() { return false; }
+
+    default void setRollbackOnly() {
+        throw new IllegalStateException("没有可标记的事务");
+    }
+
+    default void registerSynchronization(TransactionSynchronization synchronization) {
+        throw new IllegalStateException("没有可注册回调的事务");
+    }
 }

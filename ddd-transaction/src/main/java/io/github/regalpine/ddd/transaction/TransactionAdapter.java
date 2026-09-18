@@ -31,4 +31,17 @@ public interface TransactionAdapter {
      * Returns whether a transaction is currently active.
      */
     boolean isActive();
+
+    /** 挂起当前物理资源；返回的令牌仅供同一适配器恢复。 */
+    default Object suspend() {
+        throw new UnsupportedOperationException("适配器不支持事务挂起");
+    }
+
+    default void resume(Object resource) {
+        throw new UnsupportedOperationException("适配器不支持事务恢复");
+    }
+
+    /** 释放当前范围拥有的资源，不执行提交。 */
+    default void close() {
+    }
 }

@@ -31,6 +31,7 @@ class JdbcTransactionAdapterTest {
     void tearDown() throws Exception {
         if (adapter.isActive()) {
             adapter.rollback();
+            adapter.close();
         }
         try (Connection conn = connectionProvider.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -51,6 +52,7 @@ class JdbcTransactionAdapterTest {
         assertTrue(adapter.isActive());
 
         adapter.commit();
+        adapter.close();
         assertFalse(adapter.isActive());
     }
 
@@ -61,6 +63,7 @@ class JdbcTransactionAdapterTest {
         assertTrue(adapter.isActive());
 
         adapter.rollback();
+        adapter.close();
         assertFalse(adapter.isActive());
     }
 

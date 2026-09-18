@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -20,6 +21,14 @@ class InboxProcessorTest {
         public boolean exists(String consumerId, String messageId) {
             var r = records.get(key(consumerId, messageId));
             return r != null && "PROCESSED".equals(r.status());
+        }
+
+        @Override
+        public boolean tryInsert(InboxRecord record) {
+            String key = key(record.consumerId(), record.eventId());
+            if (records.containsKey(key)) return false;
+            records.put(key, record);
+            return true;
         }
 
         @Override
@@ -44,10 +53,12 @@ class InboxProcessorTest {
         }
     }
 
+    private static final Consumer<Runnable> DIRECT_TRANSACTION = Runnable::run;
+
     @Test
     void processShouldInvokeHandlerForNewEvent() {
         var store = new TestInboxStore();
-        var processor = new InboxProcessor(store);
+        var processor = new InboxProcessor(store, DIRECT_TRANSACTION);
         var handled = new ArrayList<>();
 
         processor.process("consumer-1", "event-1", "TestEvent", r -> handled.add(r.eventId()));
@@ -58,7 +69,7 @@ class InboxProcessorTest {
     @Test
     void processShouldSkipDuplicateEvent() {
         var store = new TestInboxStore();
-        var processor = new InboxProcessor(store);
+        var processor = new InboxProcessor(store, DIRECT_TRANSACTION);
         var handled = new ArrayList<>();
 
         processor.process("consumer-1", "event-1", "TestEvent", r -> handled.add(r.eventId()));
@@ -70,7 +81,7 @@ class InboxProcessorTest {
     @Test
     void differentConsumersShouldProcessSameEvent() {
         var store = new TestInboxStore();
-        var processor = new InboxProcessor(store);
+        var processor = new InboxProcessor(store, DIRECT_TRANSACTION);
         var handled = new ArrayList<>();
 
         processor.process("consumer-A", "event-1", "TestEvent", r -> handled.add("A"));
@@ -82,7 +93,7 @@ class InboxProcessorTest {
     @Test
     void processShouldRejectNullConsumerId() {
         var store = new TestInboxStore();
-        var processor = new InboxProcessor(store);
+        var processor = new InboxProcessor(store, DIRECT_TRANSACTION);
 
         assertThatThrownBy(() -> processor.process(null, "e1", "T", r -> {}))
                 .isInstanceOf(NullPointerException.class);
